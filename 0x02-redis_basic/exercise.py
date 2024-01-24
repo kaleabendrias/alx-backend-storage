@@ -47,7 +47,7 @@ def replay(method: Callable) -> None:
     for i, o in zip(inputs, outputs):
         i = i.decode('utf-8')
         o = o.decode('utf-8')
-        print("{}{} -> {}".format({method_name}, {i}, {o}))
+        print("{}(*{}) -> {}".format({method_name}, {i}, {o}))
 
 
 class Cache():
