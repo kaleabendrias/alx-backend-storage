@@ -4,17 +4,35 @@
 from functools import wraps
 import redis
 import requests
-from typing import Callable
-
-redis_ = redis.Redis()
 
 
+# Connect to Redis
+redis_client = redis.Redis()
+
+def cache_result(expires=10):
+    """
+    Decorator for caching the result of a function with an expiration time.
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(url):
+            count_key = f"count:{url}"
+            result_key = f"result:{url}"
+
+            # Check if the URL is in the cache
+            if not redis_client.get(count_key):
+                redis_client.set(count_key, 1)
+                result = func(url)
+                redis_client.setex(result_key, expires, result)
+            else:
+                redis_client.incr(count_key)
+                result = redis_client.get(result_key)
+
+            return result
+        return wrapper
+    return decorator
+
+@cache_result()
 def get_page(url: str) -> str:
-    """we will implement a get_page function ."""
-    result = requests.get(url).text
-    if not redis_.get("count:{}".format(url)):
-        redis_.set("count:{}".format(url), 1)
-        redis_.setex("result:{}".format(url), 10, result)
-    else:
-        redis_.incr("count:{}".format(url), 1)
-    return result
+    """Implement a get_page function."""
+    return requests.get(url).text
