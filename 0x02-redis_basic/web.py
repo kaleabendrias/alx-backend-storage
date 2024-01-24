@@ -6,7 +6,6 @@ import redis
 import requests
 
 
-# Connect to Redis
 redis_client = redis.Redis()
 
 
