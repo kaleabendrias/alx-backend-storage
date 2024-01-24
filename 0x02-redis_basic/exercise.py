@@ -46,7 +46,7 @@ def replay(self, method: Callable) -> None:
     for i, o in zip(inputs, outputs):
         i = eval(i.decode())
         o = o.decode()
-        print(f"{method_key}{i} -> {o}")
+        print("{}{} -> {}".format({method_key}, {i}, {o}))
 
 
 class Cache():
