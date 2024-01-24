@@ -9,6 +9,7 @@ import requests
 # Connect to Redis
 redis_client = redis.Redis()
 
+
 def cache_result(expires=10):
     """
     Decorator for caching the result of a function with an expiration time.
@@ -31,6 +32,7 @@ def cache_result(expires=10):
             return result
         return wrapper
     return decorator
+
 
 @cache_result()
 def get_page(url: str) -> str:
