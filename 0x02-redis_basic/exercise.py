@@ -3,6 +3,7 @@
 import redis
 import uuid
 from typing import Callable, Optional, Union
+from functools import wraps
 
 
 class Cache():
@@ -17,11 +18,10 @@ class Cache():
         """
         Decorator to count the number of calls to a method and store the count in Redis
         """
-        key = method.__qualname__
-
+        @wraps(method)
         def wrapper(self, *args, **kwargs):
             """wrapper function"""
-            self._redis.incr(key)
+            self._redis.incr(method.__qualname__)
             return method(self, *args, **kwargs)
         return wrapper
     
