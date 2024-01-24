@@ -2,7 +2,7 @@
 """Create a Cache class."""
 import redis
 import uuid
-from typing import Union
+from typing import Callable, Optional, Union
 
 
 class Cache():
@@ -17,3 +17,18 @@ class Cache():
         key=str(uuid.uuid4())
         self._redis.set(key, data)
         return key
+
+    def get(self, key: str, fn: Optional[Callable] = None) -> Union[str, bytes, int, None]:
+        """to convert the data back to the desired format."""
+        if fn:
+            return fn(self._redis.get(key))
+        else:
+            return self._redis.get(key)
+    
+    def get_str(self, key:str) -> str:
+        """automatically parametrize Cache.get with the correct conversion function"""
+        return self.get(key, str)
+    
+    def get_int(self, key:int) -> int:
+        """automatically parametrize Cache.get with the correct conversion function"""
+        return self.get(key, int)
