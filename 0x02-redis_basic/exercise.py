@@ -38,13 +38,11 @@ def call_history(method: Callable) -> Callable:
 def replay(self, method: Callable) -> None:
     """replay function"""
     method_key = method.__qualname__
-    inputs_key = method_key + ":inputs"
-    outputs_key = method_key + ":outputs"
-
-    inputs = self._redis.lrange(inputs_key, 0, -1)
-    outputs = self._redis.lrange(outputs_key, 0, -1)
-
-    print(f"{method_key} was called {len(inputs)} times:")
+    cache = redis.Redis()
+    calls = cache.get(method_key).decode("utf-8")
+    print("{} was called {} times:".format(method_key, calls))
+    inputs = cache.lrange(method_key + ":inputs", 0, -1)
+    outputs = cache.lrange(method_key + ":outputs", 0, -1)
     for i, o in zip(inputs, outputs):
         i = eval(i.decode())
         o = o.decode()
