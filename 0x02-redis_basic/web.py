@@ -13,13 +13,13 @@ def count_requests(method: Callable) -> Callable:
     """ Decortator counter"""
     @wraps(method)
     def wrapper(url):  # sourcery skip: use-named-expression
-        """Wrapper for decorator"""
-        redis_.incr("count:{}".format(url))
-        cached_html = redis_.get("cached:{}".format(url))
+        """ Wrapper for decorator"""
+        redis_.incr(f"count:{url}")
+        cached_html = redis_.get(f"cached:{url}")
         if cached_html:
             return cached_html.decode('utf-8')
         html = method(url)
-        redis_.setex("cached:{}".format(url), 10, html)
+        redis_.setex(f"cached:{url}", 10, html)
         return html
 
     return wrapper
