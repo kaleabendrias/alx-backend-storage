@@ -20,11 +20,13 @@ class Cache():
         """
         @wraps(method)
         def wrapper(self, *args, **kwargs):
-            """wrapper function"""
-            self._redis.incr(method.__qualname__)
-            return method(self, *args, **kwargs)
+            key = method.__qualname__
+            count = self._redis.incr(key)
+            result = method(self, *args, **kwargs)
+            return result
         return wrapper
-    
+
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """STORE METHOD"""
         key=str(uuid.uuid4())
